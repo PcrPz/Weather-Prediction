@@ -1,5 +1,6 @@
 # app.py
 import os
+import tempfile
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
@@ -13,9 +14,8 @@ import requests
 from io import BytesIO
 from huggingface_hub import hf_hub_download
 
-# Configuration
-UPLOAD_FOLDER = '/Users/ftmacbookair/Desktop/untitled folder/photo'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Use a temporary directory for uploads instead of hardcoded path
+UPLOAD_FOLDER = tempfile.gettempdir()
 
 # Class labels for the model
 LABELS = ['cloudy', 'foggy', 'rainy', 'shine', 'sunrise']
@@ -129,15 +129,8 @@ if uploaded_file is not None:
     with col2:
         if st.button("Classify"):
             with st.spinner("Classifying..."):
-                # Get image bytes
+                # Get image bytes and predict directly without saving
                 img_bytes = uploaded_file.getvalue()
-                
-                # Save the file
-                filename = os.path.join(UPLOAD_FOLDER, uploaded_file.name)
-                with open(filename, "wb") as f:
-                    f.write(img_bytes)
-                
-                # Predict
                 predictions = predict_image(img_bytes)
                 
                 # Display results
